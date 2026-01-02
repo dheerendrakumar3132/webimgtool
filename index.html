@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebImgTool - Convert, Resize & Compress Images Free</title>
+    <meta name="description" content="Free online image converter tool. Convert JPG, PNG, WEBP, HEIC, PDF and resize images instantly in your browser.">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2563eb;       /* Blue */
+            --primary-dark: #1e40af;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- Header --- */
+        header {
+            background: var(--card-bg);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* --- Main Container --- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Tool Card --- */
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 60px;
+            border: 1px solid var(--border);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .upload-sub {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            display: none; /* Hidden initially */
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        .resize-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .resize-inputs div {
+            flex: 1;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin-top: 8px;
+            color: var(--text-light);
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-action:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-action:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Status & Download */
+        .status-message {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            min-height: 24px;
+        }
+
+        .btn-download {
+            display: none;
+            background: #10b981; /* Green */
+            color: white;
+            text-align: center;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-download:hover {
+            background: #059669;
+        }
+
+        /* --- Tutorial Section --- */
+        .tutorial-section {
+            margin-top: 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: var(--text-main);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .step-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .step-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #e2e8f0;
+            margin-bottom: 15px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .step-info h3 {
+            margin: 10px 0 5px;
+            font-size: 18px;
+        }
+
+        .step-info p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: auto;
+        }
+
+        footer p {
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        footer strong {
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>WebImgTool</h1>
+        <p>Simple & Secure Image Converter</p>
+    </header>
+
+    <main>
+        <div class="tool-card">
+            
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <span class="upload-icon">📂</span>
+                <span class="upload-text" id="fileNameText">Click to Upload Image</span>
+                <span class="upload-sub">Supports JPG, PNG, WEBP, HEIC</span>
+                <input type="file" id="fileInput" accept="image/*,.heic" style="display: none;">
+            </div>
+
+            <div class="settings-panel" id="settingsPanel">
+                
+                <div class="control-group">
+                    <label>Convert To Format:</label>
+                    <select id="formatSelect">
+                        <option value="image/jpeg">JPG (Standard Photo)</option>
+                        <option value="image/png">PNG (High Quality/Transparent)</option>
+                        <option value="image/webp">WEBP (Fast Web Image)</option>
+                        <option value="application/pdf">PDF (Document)</option>
+                        <option value="image/svg+xml">SVG (Vector Wrapper)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Resize Image (Optional):</label>
+                    <div class="resize-inputs">
+                        <div>
+                            <input type="number" id="widthInput" placeholder="Width (px)">
+                        </div>
+                        <div>
+                            <input type="number" id="heightInput" placeholder="Height (px)">
+                        </div>
+                    </div>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="ratioCheck" checked> Lock Aspect Ratio
+                    </label>
+                </div>
+
+                <button class="btn-action" id="convertBtn" onclick="processImage()">Convert Image</button>
+
+                <div id="statusMsg" class="status-message"></div>
+                <a id="downloadBtn" class="btn-download" download>Download Converted File</a>
+            </div>
+        </div>
+
+        <div class="tutorial-section">
+            <h2 class="section-title">How to Use WebImgTool</h2>
+            <div class="steps-grid">
+                
+                <div class="step-card">
+                    <img src="https://placehold.co/600x400/e2e8f0/1e293b?text=Step+1:+Upload" alt="Upload Image" class="step-img">
+                    <div class="step-info">
+                        <h3>1. Upload</h3>
+                        <p>Click on the box above and select your image (JPG, PNG, or even HEIC from iPhone).</p>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <img src="https://placehold.co/600x400/e2e8f0/1e293b?text=Step+2:+Select+Format" alt="Select Settings" class="step-img">
+                    <div class="step-info">
+                        <h3>2. Choose Format</h3>
+                        <p>Select the format you want (like PDF or JPG) and change the width/height if needed.</p>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <img src="https://placehold.co/600x400/e2e8f0/1e293b?text=Step+3:+Download" alt="Download Result" class="step-img">
+                    <div class="step-info">
+                        <h3>3. Download</h3>
+                        <p>Click "Convert Image". The tool will process it instantly and you can download it.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const fileNameText = document.getElementById('fileNameText');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const ratioCheck = document.getElementById('ratioCheck');
+        const convertBtn = document.getElementById('convertBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // State Variables
+        let originalImage = null;
+        let origWidth = 0;
+        let origHeight = 0;
+
+        // 1. Handle File Selection
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Reset UI
+            fileNameText.innerHTML = "✅ Selected: " + file.name;
+            statusMsg.textContent = "Loading image preview...";
+            convertBtn.disabled = true;
+            downloadBtn.style.display = 'none';
+            settingsPanel.style.display = 'block';
+
+            // Detect HEIC
+            if (file.name.toLowerCase().endsWith('.heic')) {
+                statusMsg.textContent = "Processing HEIC file... please wait.";
+                try {
+                    // Convert HEIC to JPEG Blob using library
+                    const blob = await heic2any({ blob: file, toType: "image/jpeg" });
+                    const url = URL.createObjectURL(blob);
+                    loadImage(url);
+                } catch (error) {
+                    alert("Error processing HEIC: " + error.message);
+                    statusMsg.textContent = "Error loading file.";
+                }
+            } else {
+                // Standard Images
+                const reader = new FileReader();
+                reader.onload = (event) => loadImage(event.target.result);
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 2. Load Image into Memory
+        function loadImage(src) {
+            originalImage = new Image();
+            originalImage.src = src;
+            originalImage.onload = () => {
+                origWidth = originalImage.width;
+                origHeight = originalImage.height;
+
+                // Set default inputs
+                widthInput.value = origWidth;
+                heightInput.value = origHeight;
+                
+                statusMsg.textContent = "";
+                convertBtn.disabled = false;
+            };
+        }
+
+        // 3. Aspect Ratio Logic
+        widthInput.addEventListener('input', () => {
+            if (ratioCheck.checked && origWidth > 0) {
+                const ratio = origHeight / origWidth;
+                heightInput.value = Math.round(widthInput.value * ratio);
+            }
+        });
+
+        heightInput.addEventListener('input', () => {
+            if (ratioCheck.checked && origWidth > 0) {
+                const ratio = origWidth / origHeight;
+                widthInput.value = Math.round(heightInput.value * ratio);
+            }
+        });
+
+        // 4. Processing & Conversion
+        function processImage() {
+            if (!originalImage) return;
+
+            statusMsg.textContent = "Converting... Please wait.";
+            convertBtn.disabled = true;
+            downloadBtn.style.display = 'none';
+
+            // Small delay to let UI show "Converting..."
+            setTimeout(() => {
+                const format = document.getElementById('formatSelect').value;
+                const w = parseInt(widthInput.value) || origWidth;
+                const h = parseInt(heightInput.value) || origHeight;
+
+                // Canvas Setup
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+
+                // Fill White Background for JPG (handling transparency)
+                if (format === 'image/jpeg') {
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, w, h);
+                }
+
+                ctx.drawImage(originalImage, 0, 0, w, h);
+
+                // Export Logic
+                try {
+                    // PDF Case
+                    if (format === 'application/pdf') {
+                        const { jsPDF } = window.jspdf;
+                        const doc = new jsPDF({
+                            orientation: w > h ? 'l' : 'p',
+                            unit: 'px',
+                            format: [w, h]
+                        });
+                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                        doc.addImage(imgData, 'JPEG', 0, 0, w, h);
+                        doc.save("webimgtool-converted.pdf");
+                        finish("PDF Downloaded automatically!");
+                        return;
+                    }
+
+                    // SVG Case
+                    if (format === 'image/svg+xml') {
+                        const imgData = canvas.toDataURL('image/png');
+                        const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><image href="${imgData}" width="${w}" height="${h}" /></svg>`;
+                        const blob = new Blob([svgString], {type: "image/svg+xml"});
+                        const url = URL.createObjectURL(blob);
+                        finish("SVG Ready!", url, "webimgtool-converted.svg");
+                        return;
+                    }
+
+                    // JPG/PNG/WEBP Case
+                    const dataUrl = canvas.toDataURL(format, 0.92); // 0.92 Quality
+                    const ext = format.split('/')[1];
+                    finish("Conversion Complete!", dataUrl, `webimgtool-converted.${ext}`);
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Something went wrong during conversion.");
+                    convertBtn.disabled = false;
+                }
+            }, 100);
+        }
+
+        // 5. Finish & Show Download
+        function finish(msg, url = null, filename = "") {
+            statusMsg.textContent = msg;
+            convertBtn.disabled = false;
+            
+            if (url) {
+                downloadBtn.href = url;
+                downloadBtn.download = filename;
+                downloadBtn.style.display = 'inline-block';
+                // Auto click optional (commented out to let user choose)
+                // downloadBtn.click();
+            }
+        }
+    </script>
+</body>
+</html>
+<footer>
+    <p>&copy; 2026 <strong>WebImgTool</strong>. All rights reserved.</p>
+    Designed & Powered by Dheerendra Patel</p>
+    <p>
+        <a href="privacy.html" style="color: #94a3b8; text-decoration: underline; margin-right: 15px;">Privacy Policy</a>
+        <a href="Terms & conditions.html" style="color: #94a3b8; text-decoration: underline;">Terms & Conditions</a>
+    </p>
+</footer>
