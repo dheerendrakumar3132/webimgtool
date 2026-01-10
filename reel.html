@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ReelDownload - Fast & Free</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* --- THEME COLORS --- */
+        :root {
+            --insta-gradient: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            --insta-primary: #d62976;
+            --success-green: #22c55e;
+            --bg-color: #f8f9fa;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --radius: 12px;
+            --input-height: 64px;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #09090b;
+            --surface: #18181b;
+            --border: #27272a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; transition: background 0.3s ease; }
+
+        /* --- HEADER --- */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--surface); border-bottom: 1px solid var(--border); }
+        .logo { font-size: 1.2rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .theme-toggle { background: transparent; border: none; font-size: 1.5rem; color: var(--text-main); cursor: pointer; padding: 5px; }
+
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; width: 100%; max-width: 800px; margin: 0 auto; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+
+        .hero-title {
+            font-size: clamp(1.8rem, 4vw, 3.2rem);
+            font-weight: 800; text-align: center; line-height: 1.2; margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* --- DOWNLOADER BOX --- */
+        .downloader-box {
+            width: 100%; max-width: 700px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 20px; padding: 10px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        @media (min-width: 768px) { .input-group { flex-direction: row; } }
+
+        .input-area {
+            flex: 1; display: flex; align-items: center; background: var(--bg-color);
+            border: 1px solid var(--border); border-radius: 12px; height: var(--input-height); padding: 0 15px;
+            transition: 0.3s;
+        }
+        .input-area:focus-within { border-color: var(--insta-primary); }
+        
+        input { flex: 1; height: 100%; border: none; background: transparent; font-size: 1rem; color: var(--text-main); outline: none; }
+        
+        .paste-btn {
+            background: rgba(128,128,128,0.1); padding: 8px 12px; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer; color: var(--text-main); border: none;
+        }
+
+        .download-btn {
+            height: var(--input-height); background: var(--insta-gradient); color: white; border: none;
+            border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            padding: 0 30px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 5px 20px rgba(214, 41, 118, 0.3); transition: 0.2s;
+        }
+        .download-btn:active { transform: scale(0.98); }
+        .download-btn:disabled { opacity: 0.7; cursor: wait; }
+
+        /* --- STATUS & RESULT --- */
+        .status-container {
+            width: 100%; max-width: 700px; margin-top: 25px; display: none; flex-direction: column; align-items: center;
+        }
+
+        .status-msg { font-size: 1rem; font-weight: 500; color: var(--text-muted); margin-bottom: 20px; }
+        .status-msg.error { color: #ef4444; }
+
+        /* Skeleton Loader */
+        .skeleton {
+            width: 100%; max-width: 300px; aspect-ratio: 9/16; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden; display: none;
+        }
+        .skeleton::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+        /* Video Result */
+        .result-box { display: none; flex-direction: column; align-items: center; gap: 15px; width: 100%; max-width: 320px; }
+        
+        video {
+            width: 100%; border-radius: 16px; border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: black; display: block;
+        }
+
+        .action-btn {
+            width: 100%; padding: 14px; border-radius: 12px; text-decoration: none;
+            text-align: center; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none;
+        }
+        .btn-primary { background: var(--insta-primary); color: white; }
+        .btn-secondary { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border); margin-top: 10px; }
+
+        /* --- FOOTER --- */
+        footer { margin-top: auto; padding: 30px 20px; border-top: 1px solid var(--border); text-align: center; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; margin: 0 10px; font-size: 0.9rem; }
+        .copyright { margin-top: 15px; color: var(--text-muted); font-size: 0.8rem; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo"><i class="ph-fill ph-film-strip" style="color:var(--insta-primary)"></i> ReelDownload</a>
+        <button class="theme-toggle" onclick="toggleTheme()"><i class="ph-fill ph-moon"></i></button>
+    </header>
+
+    <main>
+        <h1 class="hero-title">Paste Link and Download<br>Instagram Reel</h1>
+
+        <div class="downloader-box" id="inputBox">
+            <div class="input-group">
+                <div class="input-area">
+                    <input type="text" id="linkInput" placeholder="Paste Instagram Link Here..." onfocus="this.select()">
+                    <button class="paste-btn" onclick="pasteLink()"><i class="ph-bold ph-clipboard-text"></i> Paste</button>
+                </div>
+                <button class="download-btn" id="dlBtn" onclick="processDownload()">
+                    Download <i class="ph-bold ph-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="status-container" id="statusArea">
+            <p class="status-msg" id="statusMsg">Connecting to server...</p>
+            
+            <div class="skeleton" id="skeletonLoader"></div>
+
+            <div class="result-box" id="resultBox">
+                <video id="videoPlayer" controls playsinline></video>
+                
+                <a id="finalDownloadBtn" class="action-btn btn-primary" href="#" target="_blank" download>
+                    <i class="ph-bold ph-download-simple"></i> Save to Gallery
+                </a>
+                
+                <button class="action-btn btn-secondary" onclick="resetUI()">
+                    Download Another
+                </button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 60px; width: 100%; max-width: 700px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div style="background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    <i class="ph-duotone ph-lightning" style="font-size: 24px; color: var(--insta-primary); margin-bottom: 10px;"></i>
+                    <h3 style="font-size: 1rem; margin-bottom: 5px;">Fast Speed</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Videos are processed and ready in seconds.</p>
+                </div>
+                <div style="background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid var(--border);">
+                    <i class="ph-duotone ph-shield-check" style="font-size: 24px; color: var(--success-green); margin-bottom: 10px;"></i>
+                    <h3 style="font-size: 1rem; margin-bottom: 5px;">Secure</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">We do not store your downloads or history.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">Terms of Use</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact</a>
+        </div>
+        <p class="copyright">&copy; 2026 ReelDownload.net. Not affiliated with Instagram.</p>
+    </footer>
+
+    <script>
+        // --- CONFIGURATION ---
+        const API_KEY = "free_user_01"; // Aapki API Key
+        const API_BASE = "https://cdn.reeldownload.net/";
+
+        // --- THEME LOGIC ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        }
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        // --- PASTE LOGIC ---
+        async function pasteLink() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('linkInput').value = text;
+            } catch(e) { alert("Please paste manually."); }
+        }
+
+        // --- MAIN DOWNLOAD LOGIC ---
+        async function processDownload() {
+            const input = document.getElementById('linkInput');
+            const url = input.value.trim();
+            const btn = document.getElementById('dlBtn');
+            const statusArea = document.getElementById('statusArea');
+            const msg = document.getElementById('statusMsg');
+            const skeleton = document.getElementById('skeletonLoader');
+            const resultBox = document.getElementById('resultBox');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const dlBtn = document.getElementById('finalDownloadBtn');
+
+            // 1. Validation
+            const instaRegex = /instagram\.com\/(?:reel|p|stories|tv)\/[a-zA-Z0-9_-]+/;
+            
+            if (!url || !instaRegex.test(url)) {
+                alert("Please paste a valid Instagram Link!");
+                return;
+            }
+
+            // 2. UI Updates (Loading State)
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph-bold ph-spinner ph-spin"></i> Processing...`;
+            statusArea.style.display = 'flex';
+            resultBox.style.display = 'none';
+            skeleton.style.display = 'block';
+            msg.textContent = "Fetching video details...";
+            msg.className = "status-msg"; // Reset error class
+            
+            // Hide Input Box temporarily for cleaner look
+            document.getElementById('inputBox').style.opacity = '0.5';
+            document.getElementById('inputBox').style.pointerEvents = 'none';
+
+            try {
+                // 3. API Call
+                const apiUrl = `${API_BASE}?url=${encodeURIComponent(url)}&apikey=${API_KEY}`;
+                
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // 4. Handle Response
+                if (data.status === "success" && data.data && data.data.url) {
+                    
+                    // SUCCESS
+                    msg.textContent = "Video Found!";
+                    skeleton.style.display = 'none';
+                    resultBox.style.display = 'flex';
+                    
+                    // Setup Player
+                    videoPlayer.src = data.data.url;
+                    
+                    // Setup Download Button
+                    // Priority: download_url > url
+                    const finalUrl = data.data.download_url || data.data.url;
+                    dlBtn.href = finalUrl;
+
+                } else {
+                    throw new Error("Could not find video. Account might be private.");
+                }
+
+            } catch (error) {
+                // ERROR
+                console.error(error);
+                msg.textContent = "Error: " + error.message;
+                msg.className = "status-msg error";
+                skeleton.style.display = 'none';
+            } finally {
+                // RESET BUTTON
+                btn.disabled = false;
+                btn.innerHTML = `Download <i class="ph-bold ph-arrow-right"></i>`;
+                document.getElementById('inputBox').style.opacity = '1';
+                document.getElementById('inputBox').style.pointerEvents = 'auto';
+            }
+        }
+
+        function resetUI() {
+            document.getElementById('linkInput').value = '';
+            document.getElementById('statusArea').style.display = 'none';
+            document.getElementById('videoPlayer').pause();
+            document.getElementById('videoPlayer').src = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
