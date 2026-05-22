@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms & Conditions - WebImgTool</title>
-    <link rel="icon" href="my-logo.jpeg" type="image/jpeg" sizes="144x144">
-
+    <title>Privacy Policy - WebImgTool</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -22,6 +20,9 @@
             margin: 0;
             line-height: 1.6;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Header */
@@ -31,6 +32,17 @@
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
         }
+        header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+body {
+    /* मान लीजिए हेडर की height 100px है */
+    padding-top: 100px; 
+}
 
         header h1 {
             margin: 0;
@@ -43,9 +55,10 @@
             max-width: 800px;
             margin: 40px auto;
             padding: 0 20px;
+            flex: 1;
         }
 
-        .term-card {
+        .policy-card {
             background: var(--card-bg);
             padding: 40px;
             border-radius: 12px;
@@ -86,63 +99,78 @@
             color: white;
         }
 
+        /* Footer */
         footer {
-            text-align: center;
-            padding: 20px;
+            background: #0f172a;
             color: #94a3b8;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: auto;
+        }
+
+        footer p {
             font-size: 14px;
-            margin-top: 40px;
+            margin: 5px 0;
+        }
+
+        footer strong {
+            color: white;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Terms & Conditions</h1>
+        <h1>WebImgTool</h1>
+        <p>Simple & Secure Image Converter</p>
     </header>
 
     <div class="container">
-        <div class="term-card">
+        <div class="policy-card">
+            <p><strong>Privacy Policy &rarr;</strong></p>
             <p><strong>Last Updated:</strong> January 2026</p>
             
-            <p>Welcome to WebImgTool. By accessing this website, you agree to be bound by these Terms and Conditions of Use, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.</p>
+            <p>Welcome to WebImgTool. We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we handle your images and data.</p>
 
-            <h2>1. Use License</h2>
-            <p>Permission is granted to temporarily use the materials (software) on WebImgTool's website for personal, non-commercial transitory viewing and image processing only. Under this license, you may not:</p>
+            <h2>1. No Server Uploads (Client-Side Processing)</h2>
+            <p>The most important thing to know is that <strong>we do not upload your images to our servers</strong>. All image conversion, resizing, and processing happens locally within your web browser using JavaScript.</p>
             <ul>
-                <li>Modify or copy the source code of the website;</li>
-                <li>Use the materials for any commercial purpose without explicit permission;</li>
-                <li>Attempt to reverse engineer any software contained on WebImgTool's website.</li>
+                <li>Your photos never leave your device.</li>
+                <li>We do not store, view, or share your files.</li>
+                <li>Once you close the tab, all data is cleared from your browser memory.</li>
             </ul>
 
-            <h2>2. User Responsibility</h2>
-            <p>Since WebImgTool processes images locally in your browser:</p>
+            <h2>2. Data Collection</h2>
+            <p>Since we do not require user accounts or logins, we do not collect personal information such as:</p>
             <ul>
-                <li>You maintain full ownership and copyright of your images.</li>
-                <li>You agree not to use this tool to process illegal, offensive, or copyrighted material for which you do not have permission.</li>
-                <li>We are not responsible for any data loss resulting from the use of this tool.</li>
+                <li>Names</li>
+                <li>Email addresses</li>
+                <li>Phone numbers</li>
+                <li>Payment details</li>
             </ul>
 
-            <h2>3. Disclaimer</h2>
-            <p>The materials on WebImgTool's website are provided on an 'as is' basis. WebImgTool makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties of merchantability or fitness for a particular purpose.</p>
+            <h2>3. Third-Party Libraries</h2>
+            <p>To provide features like PDF and HEIC conversion, we use trusted external libraries (CDNs). These libraries are loaded into your browser to help process files, but they do not collect your personal data.</p>
 
-            <h2>4. Limitations</h2>
-            <p>In no event shall WebImgTool or its owners be liable for any damages (including, without limitation, damages for loss of data or profit) arising out of the use or inability to use the materials on WebImgTool's website.</p>
+            <h2>4. Analytics</h2>
+            <p>Like most websites, our hosting provider may collect basic, anonymous logs (such as IP addresses or browser types) to ensure the security and performance of the website. This data is not linked to your processed images.</p>
 
-            <h2>5. Governing Law</h2>
-            <p>These terms and conditions are governed by and construed in accordance with the laws of India and you irrevocably submit to the exclusive jurisdiction of the courts in that State or location.</p>
-
-            <h2>6. Contact Us</h2>
-            <p>If you have any questions about these Terms, please contact us at:</p>
+            <h2>5. Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
             <p><strong>Email:</strong> dheerendra@novaplexes.com</p>
 
             <a href="index.html" class="back-btn">← Back to Home</a>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 WebImgTool by Novaplexes.</p>
-    </footer>
+<footer>
+    <p>&copy; 2026 <strong>WebImgTool</strong>. All rights reserved.</p>
+    Designed & Powered by Novaplexes</p>
+    <p>
+        <a href="privacy.html" style="color: #94a3b8; text-decoration: underline; margin-right: 15px;">Privacy Policy</a>
+        <a href="Terms & conditions.html" style="color: #94a3b8; text-decoration: underline;">Terms & Conditions</a>
+    </p>
+</footer>
 
 </body>
 </html>
