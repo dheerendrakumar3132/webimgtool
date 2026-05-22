@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - WebImgTool</title>
-    <link rel="icon" href="my-logo.jpeg" type="image/jpeg" sizes="144x144">
     <style>
         :root {
             --primary: #2563eb;
@@ -21,6 +20,9 @@
             margin: 0;
             line-height: 1.6;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         /* Header */
@@ -30,6 +32,17 @@
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
         }
+        header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+body {
+    /* मान लीजिए हेडर की height 100px है */
+    padding-top: 100px; 
+}
 
         header h1 {
             margin: 0;
@@ -42,6 +55,7 @@
             max-width: 800px;
             margin: 40px auto;
             padding: 0 20px;
+            flex: 1;
         }
 
         .policy-card {
@@ -85,23 +99,35 @@
             color: white;
         }
 
+        /* Footer */
         footer {
-            text-align: center;
-            padding: 20px;
+            background: #0f172a;
             color: #94a3b8;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: auto;
+        }
+
+        footer p {
             font-size: 14px;
-            margin-top: 40px;
+            margin: 5px 0;
+        }
+
+        footer strong {
+            color: white;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>WebImgTool Privacy Policy</h1>
+        <h1>WebImgTool</h1>
+        <p>Simple & Secure Image Converter</p>
     </header>
 
     <div class="container">
         <div class="policy-card">
+            <p><strong>Privacy Policy &rarr;</strong></p>
             <p><strong>Last Updated:</strong> January 2026</p>
             
             <p>Welcome to WebImgTool. We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we handle your images and data.</p>
@@ -137,9 +163,14 @@
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 WebImgTool by Novaplexes. All rights reserved.</p>
-    </footer>
+<footer>
+    <p>&copy; 2026 <strong>WebImgTool</strong>. All rights reserved.</p>
+    Designed & Powered by Novaplexes</p>
+    <p>
+        <a href="privacy.html" style="color: #94a3b8; text-decoration: underline; margin-right: 15px;">Privacy Policy</a>
+        <a href="Terms & conditions.html" style="color: #94a3b8; text-decoration: underline;">Terms & Conditions</a>
+    </p>
+</footer>
 
 </body>
 </html>
